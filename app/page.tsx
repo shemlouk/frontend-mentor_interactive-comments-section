@@ -10,15 +10,27 @@ export default async function Home() {
         {comments.map((comment) => {
           return (
             <li key={comment.id}>
-              <Comment {...comment} />
+              <Comment
+                {...comment}
+                isCurrentUser={comment.user.username === currentUser.username}
+              />
               {!!comment.replies.length && (
                 <div className="flex gap-4 mt-4">
                   <div className="items-stretch w-2 rounded-full bg-lightGray" />
-                  <div className="flex flex-col gap-4">
+                  <ul className="flex flex-col gap-4">
                     {comment.replies.map((reply) => {
-                      return <Comment key={reply.id} {...reply} />;
+                      return (
+                        <li key={reply.id}>
+                          <Comment
+                            {...reply}
+                            isCurrentUser={
+                              reply.user.username === currentUser.username
+                            }
+                          />
+                        </li>
+                      );
                     })}
-                  </div>
+                  </ul>
                 </div>
               )}
             </li>

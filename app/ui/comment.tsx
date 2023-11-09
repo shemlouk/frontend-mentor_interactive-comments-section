@@ -1,3 +1,5 @@
+import IconDelete from "@/public/images/icon-delete.svg";
+import IconEdit from "@/public/images/icon-edit.svg";
 import IconMinus from "@/public/images/icon-minus.svg";
 import IconPlus from "@/public/images/icon-plus.svg";
 import IconReply from "@/public/images/icon-reply.svg";
@@ -11,7 +13,8 @@ export default function Comment({
   user,
   score,
   replyingTo,
-}: Comment) {
+  isCurrentUser,
+}: Comment & { isCurrentUser: boolean }) {
   return (
     <div className="bg-white w-full gap-4 rounded-md flex flex-col p-4">
       <div className="flex gap-4 items-center">
@@ -21,14 +24,25 @@ export default function Comment({
           width={34}
           height={34}
         />
-        <Link href="#" className="font-bold text-darkBlue">
-          {user.username}
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="#" className="font-bold text-darkBlue">
+            {user.username}
+          </Link>
+          {isCurrentUser && (
+            <span className="bg-moderateBlue px-[6px] text-white text-sm font-medium rounded-sm tracking-wide">
+              you
+            </span>
+          )}
+        </div>
         <span>{createdAt}</span>
       </div>
 
       <p>
-        <span className="text-moderateBlue font-bold mr-2">@{replyingTo}</span>
+        {replyingTo && (
+          <span className="text-moderateBlue font-bold mr-2">
+            @{replyingTo}
+          </span>
+        )}
         {content}
       </p>
 
@@ -45,10 +59,23 @@ export default function Comment({
           </button>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <Image src={IconReply} alt="reply icon" />
-          <span className="text-moderateBlue font-semibold">Reply</span>
-        </div>
+        {isCurrentUser ? (
+          <div className="flex gap-4 items-center">
+            <button className="flex gap-2 items-center">
+              <Image src={IconDelete} alt="delete icon" />
+              <span className="text-softRed font-semibold">Delete</span>
+            </button>
+            <button className="flex gap-2 items-center">
+              <Image src={IconEdit} alt="edit icon" />
+              <span className="text-moderateBlue font-semibold">Edit</span>
+            </button>
+          </div>
+        ) : (
+          <button className="flex gap-2 items-center">
+            <Image src={IconReply} alt="reply icon" />
+            <span className="text-moderateBlue font-semibold">Reply</span>
+          </button>
+        )}
       </div>
     </div>
   );
