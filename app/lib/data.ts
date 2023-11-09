@@ -3,6 +3,6 @@ import { Data } from "./definitions";
 
 export async function fetchData() {
   console.log("Fetch simulation - 3 seconds");
-  // await new Promise((resolve) => setTimeout(resolve, 3000));
+  // await new Promise((resolve) => setTimeout(resolve, 500));
   return data as Data;
 }
