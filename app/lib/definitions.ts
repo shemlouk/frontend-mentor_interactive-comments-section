@@ -13,9 +13,15 @@ export type Comment = {
   score: number;
   user: User;
   replyingTo?: string;
+  replies?: Comment[];
 };
 
 export type Data = {
   currentUser: User;
-  comments: (Comment & { replies: Comment[] })[];
+  comments: Comment[];
+};
+
+export type ReplyTo = {
+  commentId: number;
+  username: string;
 };
