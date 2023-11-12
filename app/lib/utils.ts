@@ -4,19 +4,27 @@ export function generateRandomNumber(max: number) {
   return Math.round(Math.random() * max);
 }
 
-export function findCommentById(searchId: number, comments: Comment[]) {
-  let searchResult: Comment | undefined;
+type SearchResult = {
+  comment?: Comment;
+  index: number;
+  arr: Comment[];
+};
 
-  comments.forEach((comment) => {
+export function findCommentById(searchId: number, comments: Comment[]) {
+  let result: SearchResult = { comment: undefined, index: -1, arr: comments };
+
+  comments.forEach((comment, index) => {
     if (comment.id === searchId) {
-      return (searchResult = comment);
+      result.index = index;
+      result.comment = comment;
+      return;
     } else if (!!comment.replies?.length) {
-      const result = findCommentById(searchId, comment.replies);
-      if (result) return (searchResult = result);
+      const repliesSearch = findCommentById(searchId, comment.replies);
+      if (repliesSearch.index > -1) return (result = repliesSearch);
     }
   });
 
-  return searchResult;
+  return result;
 }
 
 export function findCommentParentById(searchId: number, comments: Comment[]) {

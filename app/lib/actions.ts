@@ -52,8 +52,21 @@ export async function updateScore(commentId: number, action: "add" | "sub") {
   try {
     const data = await fetchData();
 
-    const comment = findCommentById(commentId, data.comments);
+    const { comment } = findCommentById(commentId, data.comments);
     if (comment) comment.score += action === "add" ? 1 : -1;
+
+    fs.writeFileSync(PATH_TO_FILE, JSON.stringify(data));
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function deleteComment(commentId: number) {
+  try {
+    const data = await fetchData();
+
+    const { index, arr } = findCommentById(commentId, data.comments);
+    if (index > -1) arr.splice(index, 1);
 
     fs.writeFileSync(PATH_TO_FILE, JSON.stringify(data));
   } catch (error) {

@@ -7,8 +7,9 @@ import IconPlus from "@/public/images/icon-plus.svg";
 import IconReply from "@/public/images/icon-reply.svg";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { updateScore } from "../lib/actions";
+import { DeleteCommentContext } from "../lib/contexts";
 import { Comment } from "../lib/definitions";
 import CreateCommentForm from "./create-comment-form";
 
@@ -22,6 +23,8 @@ export default function Comment({
   isCurrentUser,
 }: Comment & { isCurrentUser: boolean }) {
   const [isReplying, setIsReplying] = useState(false);
+
+  const openModelWithId = useContext(DeleteCommentContext);
 
   const updateScoreWithId = updateScore.bind(null, id);
 
@@ -45,6 +48,7 @@ export default function Comment({
 
         <Footer
           {...{ score, isCurrentUser }}
+          openDeleteModel={() => openModelWithId(id)}
           toggleReply={() => setIsReplying(!isReplying)}
           updateScore={(action) => updateScoreWithId(action)}
         />
@@ -96,39 +100,41 @@ function Footer({
   isCurrentUser,
   toggleReply,
   updateScore,
+  openDeleteModel,
 }: {
   score: number;
   isCurrentUser: boolean;
   toggleReply(): void;
   updateScore(action: "add" | "sub"): void;
+  openDeleteModel(): void;
 }) {
   return (
     <div className="flex items-center justify-between">
-      <div className="flex items-center w-24 h-10 overflow-hidden rounded-lg bg-veryLightGray">
-        <form
-          action={() => updateScore("add")}
+      <form className="flex items-center w-24 h-10 overflow-hidden rounded-lg bg-veryLightGray">
+        <button
+          type="submit"
+          formAction={() => updateScore("add")}
           className="flex-1 flex justify-center items-center"
         >
-          <button>
-            <Image src={IconPlus} alt="plus icon" />
-          </button>
-        </form>
+          <Image src={IconPlus} alt="plus icon" />
+        </button>
+
         <span className="text-center text-moderateBlue font-semibold">
           {score}
         </span>
-        <form
-          action={() => updateScore("sub")}
+
+        <button
+          type="submit"
+          formAction={() => updateScore("sub")}
           className="flex-1 flex justify-center items-center"
         >
-          <button>
-            <Image src={IconMinus} alt="minus icon" />
-          </button>
-        </form>
-      </div>
+          <Image src={IconMinus} alt="minus icon" />
+        </button>
+      </form>
 
       {isCurrentUser ? (
         <div className="flex gap-4 items-center">
-          <button className="flex gap-2 items-center">
+          <button onClick={openDeleteModel} className="flex gap-2 items-center">
             <Image src={IconDelete} alt="delete icon" />
             <span className="text-softRed font-semibold">Delete</span>
           </button>

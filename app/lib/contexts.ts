@@ -9,3 +9,5 @@ export const UserContext = createContext<User>({
 });
 
 export const CommentsContext = createContext<Comment[]>([]);
+
+export const DeleteCommentContext = createContext((id: number) => {});
