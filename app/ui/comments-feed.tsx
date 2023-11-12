@@ -10,7 +10,7 @@ export default function CommentsFeed() {
   const comments = useContext(CommentsContext);
 
   return (
-    <div className="flex-1 flex flex-col-reverse overflow-y-scroll">
+    <div className="flex-1 flex flex-col-reverse overflow-y-scroll no-scrollbar">
       <CommentList {...{ comments, username }} />
     </div>
   );
@@ -24,7 +24,7 @@ function CommentList({
   username: string;
 }) {
   return (
-    <ul className="flex flex-col gap-4 flex-1">
+    <ul className="flex flex-col gap-4 flex-1 md:gap-6">
       {comments.map((comment) => (
         <CommentItem
           key={comment.id}
@@ -32,8 +32,8 @@ function CommentList({
           isCurrentUser={comment.user.username === username}
         >
           {!!comment.replies?.length && (
-            <div className="flex gap-4 mt-4">
-              <div className="items-stretch w-1 rounded-full bg-lightGray" />
+            <div className="flex gap-4 mt-4 md:gap-8 md:mt-6">
+              <div className="items-stretch w-[2px] rounded-full bg-lightGray md:ml-8" />
               <CommentList comments={comment.replies} username={username} />
             </div>
           )}
@@ -45,8 +45,8 @@ function CommentList({
 
 function CommentItem({
   comment,
-  isCurrentUser,
   children,
+  isCurrentUser,
 }: {
   comment: TypeComment;
   isCurrentUser: boolean;

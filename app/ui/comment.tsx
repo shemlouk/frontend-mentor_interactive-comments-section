@@ -1,178 +1,131 @@
 "use client";
 
-import IconDelete from "@/public/images/icon-delete.svg";
-import IconEdit from "@/public/images/icon-edit.svg";
-import IconMinus from "@/public/images/icon-minus.svg";
-import IconPlus from "@/public/images/icon-plus.svg";
-import IconReply from "@/public/images/icon-reply.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { useContext, useState } from "react";
-import { editCommentContent, updateScore } from "../lib/actions";
 import { DeleteCommentContext } from "../lib/contexts";
 import { Comment } from "../lib/definitions";
-import CreateCommentForm from "./create-comment-form";
+import { CommentButton } from "./buttons";
+import CreateCommentForm from "./forms/create-comment-form";
+import EditContentForm from "./forms/edit-content-form";
+import UpdateScoreForm from "./forms/update-score-form";
 
 export default function Comment({
   id,
-  createdAt,
-  content,
   user,
   score,
+  content,
+  createdAt,
   replyingTo,
   isCurrentUser,
 }: Comment & { isCurrentUser: boolean }) {
   const [isReplying, setIsReplying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const openModelWithId = useContext(DeleteCommentContext);
-
-  const updateScoreWithId = updateScore.bind(null, id);
-  const updateContentWithId = editCommentContent.bind(null, id);
+  const openModel = useContext(DeleteCommentContext);
+  const openModelWithId = openModel.bind(null, id);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="bg-white w-full gap-4 rounded-md flex flex-col p-4">
-        <Header
-          username={user.username}
-          profilePicture={user.image.webp}
-          {...{ createdAt, isCurrentUser }}
-        />
+    <div className="flex flex-col gap-4 md:gap-2">
+      <div className="bg-white w-full gap-4 rounded-md flex flex-col p-4 md:p-6 md:flex-row md:gap-6">
+        <div className="hidden md:block">
+          <UpdateScoreForm {...{ score, id }} />
+        </div>
 
-        <form
-          action={updateContentWithId}
-          className="flex flex-col items-end gap-4"
-          style={{ display: isEditing ? "flex" : "none" }}
-        >
-          <textarea
-            id="content"
-            name="content"
-            defaultValue={content}
-            className="w-full h-40 outline-grayishBlue rounded-xl resize-none text-grayishBlue border border-lightGray px-4 py-2"
-          />
-          <input
-            type="submit"
-            value="UPDATE"
-            onClick={() => setIsEditing(false)}
-            className="bg-moderateBlue rounded-md w-[86px] h-10 text-white text-sm font-medium"
-          />
-        </form>
+        <div className="flex flex-col gap-4 w-full">
+          <header className="flex justify-between">
+            <div className="flex gap-4 items-center">
+              <Image
+                src={user.image.webp}
+                alt={`${user.username} profile's picture`}
+                width={34}
+                height={34}
+              />
 
-        <p style={{ display: isEditing ? "none" : "block" }}>
-          {replyingTo && (
-            <span className="text-moderateBlue font-bold mr-2">
-              @{replyingTo}
-            </span>
+              <div className="flex items-center gap-2">
+                <Link href="#" className="font-bold text-darkBlue">
+                  {user.username}
+                </Link>
+
+                <span
+                  style={{ display: isCurrentUser ? "inline" : "none" }}
+                  className="bg-moderateBlue px-[6px] text-white text-sm font-medium rounded-sm tracking-wide"
+                >
+                  you
+                </span>
+              </div>
+
+              <span>{createdAt}</span>
+            </div>
+
+            <div className="hidden md:block">
+              <Buttons
+                isCurrentUser={isCurrentUser}
+                openDeleteModel={openModelWithId}
+                toggleEdit={() => setIsEditing(!isEditing)}
+                toggleReply={() => setIsReplying(!isReplying)}
+              />
+            </div>
+          </header>
+
+          {isEditing ? (
+            <EditContentForm
+              {...{ id, content }}
+              closeForm={() => setIsEditing(false)}
+            />
+          ) : (
+            <p>
+              <span
+                className="text-moderateBlue font-bold mr-2"
+                style={{ display: replyingTo ? "inline" : "none" }}
+              >
+                @{replyingTo}
+              </span>
+              {content}
+            </p>
           )}
-          {content}
-        </p>
+        </div>
 
-        <Footer
-          {...{ score, isCurrentUser }}
-          toggleEdit={() => setIsEditing(!isEditing)}
-          openDeleteModel={() => openModelWithId(id)}
-          toggleReply={() => setIsReplying(!isReplying)}
-          updateScore={(action) => updateScoreWithId(action)}
-        />
+        <footer className="flex items-center justify-between md:hidden">
+          <UpdateScoreForm {...{ score, id }} />
+          <Buttons
+            isCurrentUser={isCurrentUser}
+            openDeleteModel={openModelWithId}
+            toggleEdit={() => setIsEditing(!isEditing)}
+            toggleReply={() => setIsReplying(!isReplying)}
+          />
+        </footer>
       </div>
 
       {isReplying && (
-        <CreateCommentForm to={{ username: user.username, commentId: id }} />
+        <CreateCommentForm
+          isReply={{
+            to: { username: user.username, commentId: id },
+            closeForm: () => setIsReplying(false),
+          }}
+        />
       )}
     </div>
   );
 }
 
-function Header({
-  username,
-  createdAt,
-  profilePicture,
-  isCurrentUser,
-}: {
-  username: string;
-  createdAt: string;
-  profilePicture: string;
-  isCurrentUser: boolean;
-}) {
-  return (
-    <div className="flex gap-4 items-center">
-      <Image
-        src={profilePicture}
-        alt={`${username} profile's picture`}
-        width={34}
-        height={34}
-      />
-      <div className="flex items-center gap-2">
-        <Link href="#" className="font-bold text-darkBlue">
-          {username}
-        </Link>
-        {isCurrentUser && (
-          <span className="bg-moderateBlue px-[6px] text-white text-sm font-medium rounded-sm tracking-wide">
-            you
-          </span>
-        )}
-      </div>
-      <span>{createdAt}</span>
-    </div>
-  );
-}
-
-function Footer({
-  score,
-  isCurrentUser,
-  toggleReply,
-  updateScore,
-  openDeleteModel,
+function Buttons({
   toggleEdit,
+  toggleReply,
+  isCurrentUser,
+  openDeleteModel,
 }: {
-  score: number;
-  isCurrentUser: boolean;
-  toggleReply(): void;
-  updateScore(action: "add" | "sub"): void;
-  openDeleteModel(): void;
   toggleEdit(): void;
+  toggleReply(): void;
+  isCurrentUser: boolean;
+  openDeleteModel(): void;
 }) {
-  return (
-    <div className="flex items-center justify-between">
-      <form className="flex items-center w-24 h-10 overflow-hidden rounded-lg bg-veryLightGray">
-        <button
-          type="submit"
-          formAction={() => updateScore("add")}
-          className="flex-1 flex justify-center items-center"
-        >
-          <Image src={IconPlus} alt="plus icon" />
-        </button>
-
-        <span className="text-center text-moderateBlue font-semibold">
-          {score}
-        </span>
-
-        <button
-          type="submit"
-          formAction={() => updateScore("sub")}
-          className="flex-1 flex justify-center items-center"
-        >
-          <Image src={IconMinus} alt="minus icon" />
-        </button>
-      </form>
-
-      {isCurrentUser ? (
-        <div className="flex gap-4 items-center">
-          <button onClick={openDeleteModel} className="flex gap-2 items-center">
-            <Image src={IconDelete} alt="delete icon" />
-            <span className="text-softRed font-semibold">Delete</span>
-          </button>
-          <button onClick={toggleEdit} className="flex gap-2 items-center">
-            <Image src={IconEdit} alt="edit icon" />
-            <span className="text-moderateBlue font-semibold">Edit</span>
-          </button>
-        </div>
-      ) : (
-        <button className="flex gap-2 items-center" onClick={toggleReply}>
-          <Image src={IconReply} alt="reply icon" />
-          <span className="text-moderateBlue font-semibold">Reply</span>
-        </button>
-      )}
+  return isCurrentUser ? (
+    <div className="flex gap-4 items-center">
+      <CommentButton callback={openDeleteModel} value="delete" />
+      <CommentButton callback={toggleEdit} value="edit" />
     </div>
+  ) : (
+    <CommentButton callback={toggleReply} value="reply" />
   );
 }
