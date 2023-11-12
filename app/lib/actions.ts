@@ -73,3 +73,20 @@ export async function deleteComment(commentId: number) {
     console.error(error);
   }
 }
+
+export async function editCommentContent(
+  commentId: number,
+  formData: FormData
+) {
+  try {
+    const data = await fetchData();
+    const content = formData.get("content")?.toString();
+
+    const { comment } = findCommentById(commentId, data.comments);
+    if (comment && content) comment.content = content;
+
+    fs.writeFileSync(PATH_TO_FILE, JSON.stringify(data));
+  } catch (error) {
+    console.error(error);
+  }
+}

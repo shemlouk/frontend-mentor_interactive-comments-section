@@ -8,7 +8,7 @@ import IconReply from "@/public/images/icon-reply.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { useContext, useState } from "react";
-import { updateScore } from "../lib/actions";
+import { editCommentContent, updateScore } from "../lib/actions";
 import { DeleteCommentContext } from "../lib/contexts";
 import { Comment } from "../lib/definitions";
 import CreateCommentForm from "./create-comment-form";
@@ -23,10 +23,12 @@ export default function Comment({
   isCurrentUser,
 }: Comment & { isCurrentUser: boolean }) {
   const [isReplying, setIsReplying] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const openModelWithId = useContext(DeleteCommentContext);
 
   const updateScoreWithId = updateScore.bind(null, id);
+  const updateContentWithId = editCommentContent.bind(null, id);
 
   return (
     <div className="flex flex-col gap-4">
@@ -37,7 +39,26 @@ export default function Comment({
           {...{ createdAt, isCurrentUser }}
         />
 
-        <p>
+        <form
+          action={updateContentWithId}
+          className="flex flex-col items-end gap-4"
+          style={{ display: isEditing ? "flex" : "none" }}
+        >
+          <textarea
+            id="content"
+            name="content"
+            defaultValue={content}
+            className="w-full h-40 outline-grayishBlue rounded-xl resize-none text-grayishBlue border border-lightGray px-4 py-2"
+          />
+          <input
+            type="submit"
+            value="UPDATE"
+            onClick={() => setIsEditing(false)}
+            className="bg-moderateBlue rounded-md w-[86px] h-10 text-white text-sm font-medium"
+          />
+        </form>
+
+        <p style={{ display: isEditing ? "none" : "block" }}>
           {replyingTo && (
             <span className="text-moderateBlue font-bold mr-2">
               @{replyingTo}
@@ -48,6 +69,7 @@ export default function Comment({
 
         <Footer
           {...{ score, isCurrentUser }}
+          toggleEdit={() => setIsEditing(!isEditing)}
           openDeleteModel={() => openModelWithId(id)}
           toggleReply={() => setIsReplying(!isReplying)}
           updateScore={(action) => updateScoreWithId(action)}
@@ -101,12 +123,14 @@ function Footer({
   toggleReply,
   updateScore,
   openDeleteModel,
+  toggleEdit,
 }: {
   score: number;
   isCurrentUser: boolean;
   toggleReply(): void;
   updateScore(action: "add" | "sub"): void;
   openDeleteModel(): void;
+  toggleEdit(): void;
 }) {
   return (
     <div className="flex items-center justify-between">
@@ -138,7 +162,7 @@ function Footer({
             <Image src={IconDelete} alt="delete icon" />
             <span className="text-softRed font-semibold">Delete</span>
           </button>
-          <button className="flex gap-2 items-center">
+          <button onClick={toggleEdit} className="flex gap-2 items-center">
             <Image src={IconEdit} alt="edit icon" />
             <span className="text-moderateBlue font-semibold">Edit</span>
           </button>
