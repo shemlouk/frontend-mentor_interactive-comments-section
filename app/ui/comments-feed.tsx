@@ -24,7 +24,7 @@ function CommentList({
   username: string;
 }) {
   return (
-    <ul className="flex flex-col gap-4">
+    <ul className="flex flex-col gap-4 flex-1">
       {comments.map((comment) => (
         <CommentItem
           key={comment.id}
@@ -33,7 +33,7 @@ function CommentList({
         >
           {!!comment.replies?.length && (
             <div className="flex gap-4 mt-4">
-              <div className="items-stretch w-2 rounded-full bg-lightGray" />
+              <div className="items-stretch w-1 rounded-full bg-lightGray" />
               <CommentList comments={comment.replies} username={username} />
             </div>
           )}

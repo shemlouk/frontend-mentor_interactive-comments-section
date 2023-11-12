@@ -8,8 +8,9 @@ import IconReply from "@/public/images/icon-reply.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { updateScore } from "../lib/actions";
 import { Comment } from "../lib/definitions";
-import CommentForm from "./create-comment-form";
+import CreateCommentForm from "./create-comment-form";
 
 export default function Comment({
   id,
@@ -22,28 +23,16 @@ export default function Comment({
 }: Comment & { isCurrentUser: boolean }) {
   const [isReplying, setIsReplying] = useState(false);
 
+  const updateScoreWithId = updateScore.bind(null, id);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="bg-white w-full gap-4 rounded-md flex flex-col p-4">
-        <div className="flex gap-4 items-center">
-          <Image
-            src={user.image.webp}
-            alt={`${user.username} profile's picture`}
-            width={34}
-            height={34}
-          />
-          <div className="flex items-center gap-2">
-            <Link href="#" className="font-bold text-darkBlue">
-              {user.username}
-            </Link>
-            {isCurrentUser && (
-              <span className="bg-moderateBlue px-[6px] text-white text-sm font-medium rounded-sm tracking-wide">
-                you
-              </span>
-            )}
-          </div>
-          <span>{createdAt}</span>
-        </div>
+        <Header
+          username={user.username}
+          profilePicture={user.image.webp}
+          {...{ createdAt, isCurrentUser }}
+        />
 
         <p>
           {replyingTo && (
@@ -54,44 +43,105 @@ export default function Comment({
           {content}
         </p>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center w-24 h-10 overflow-hidden rounded-lg bg-veryLightGray">
-            <button className="flex-1 flex justify-center items-center">
-              <Image src={IconPlus} alt="plus icon" />
-            </button>
-            <span className="text-center text-moderateBlue font-semibold">
-              {score}
-            </span>
-            <button className="flex-1 flex justify-center items-center">
-              <Image src={IconMinus} alt="minus icon" />
-            </button>
-          </div>
-
-          {isCurrentUser ? (
-            <div className="flex gap-4 items-center">
-              <button className="flex gap-2 items-center">
-                <Image src={IconDelete} alt="delete icon" />
-                <span className="text-softRed font-semibold">Delete</span>
-              </button>
-              <button className="flex gap-2 items-center">
-                <Image src={IconEdit} alt="edit icon" />
-                <span className="text-moderateBlue font-semibold">Edit</span>
-              </button>
-            </div>
-          ) : (
-            <button
-              className="flex gap-2 items-center"
-              onClick={() => setIsReplying(!isReplying)}
-            >
-              <Image src={IconReply} alt="reply icon" />
-              <span className="text-moderateBlue font-semibold">Reply</span>
-            </button>
-          )}
-        </div>
+        <Footer
+          {...{ score, isCurrentUser }}
+          toggleReply={() => setIsReplying(!isReplying)}
+          updateScore={(action) => updateScoreWithId(action)}
+        />
       </div>
 
       {isReplying && (
-        <CommentForm to={{ username: user.username, commentId: id }} />
+        <CreateCommentForm to={{ username: user.username, commentId: id }} />
+      )}
+    </div>
+  );
+}
+
+function Header({
+  username,
+  createdAt,
+  profilePicture,
+  isCurrentUser,
+}: {
+  username: string;
+  createdAt: string;
+  profilePicture: string;
+  isCurrentUser: boolean;
+}) {
+  return (
+    <div className="flex gap-4 items-center">
+      <Image
+        src={profilePicture}
+        alt={`${username} profile's picture`}
+        width={34}
+        height={34}
+      />
+      <div className="flex items-center gap-2">
+        <Link href="#" className="font-bold text-darkBlue">
+          {username}
+        </Link>
+        {isCurrentUser && (
+          <span className="bg-moderateBlue px-[6px] text-white text-sm font-medium rounded-sm tracking-wide">
+            you
+          </span>
+        )}
+      </div>
+      <span>{createdAt}</span>
+    </div>
+  );
+}
+
+function Footer({
+  score,
+  isCurrentUser,
+  toggleReply,
+  updateScore,
+}: {
+  score: number;
+  isCurrentUser: boolean;
+  toggleReply(): void;
+  updateScore(action: "add" | "sub"): void;
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center w-24 h-10 overflow-hidden rounded-lg bg-veryLightGray">
+        <form
+          action={() => updateScore("add")}
+          className="flex-1 flex justify-center items-center"
+        >
+          <button>
+            <Image src={IconPlus} alt="plus icon" />
+          </button>
+        </form>
+        <span className="text-center text-moderateBlue font-semibold">
+          {score}
+        </span>
+        <form
+          action={() => updateScore("sub")}
+          className="flex-1 flex justify-center items-center"
+        >
+          <button>
+            <Image src={IconMinus} alt="minus icon" />
+          </button>
+        </form>
+      </div>
+
+      {isCurrentUser ? (
+        <div className="flex gap-4 items-center">
+          <button className="flex gap-2 items-center">
+            <Image src={IconDelete} alt="delete icon" />
+            <span className="text-softRed font-semibold">Delete</span>
+          </button>
+          <button className="flex gap-2 items-center">
+            <Image src={IconEdit} alt="edit icon" />
+            <span className="text-moderateBlue font-semibold">Edit</span>
+          </button>
+        </div>
+      ) : (
+        <button className="flex gap-2 items-center" onClick={toggleReply}>
+          <Image src={IconReply} alt="reply icon" />
+          <span className="text-moderateBlue font-semibold">Reply</span>
+        </button>
       )}
     </div>
   );
