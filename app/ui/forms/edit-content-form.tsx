@@ -22,7 +22,7 @@ export default function EditContentForm({
         id="content"
         name="content"
         defaultValue={content}
-        className="h-32 md:px-6 md:py-4 focus:border-grayishBlue"
+        className="h-32 md:px-6 md:py-4 focus:border-transparent focus:outline-1 focus:outline-offset-0 focus:outline-grayishBlue/20"
       />
       <FormButton value="update" />
     </form>

@@ -39,7 +39,7 @@ export function FormButton({ value }: { value: string }) {
   return (
     <button
       type="submit"
-      className="bg-moderateBlue rounded-md flex items-center justify-center w-[86px] h-10 text-white text-sm font-medium place-self-end md:text-base md:w-28 md:h-11 md:order-last md:place-self-start"
+      className="bg-moderateBlue rounded-md flex items-center justify-center w-[86px] h-10 text-white text-sm font-medium md:text-base md:w-28 md:h-11 md:order-last md:hover:shadow-md transition-shadow md:hover:shadow-moderateBlue/20"
     >
       {value.toUpperCase()}
     </button>

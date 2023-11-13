@@ -15,7 +15,6 @@ export default function DeleteModal({
   const openModelWithId = useCallback((id: number) => {
     setCommentId(id);
     dialogRef.current?.showModal();
-    dialogRef.current?.classList.remove("invisible");
   }, []);
 
   return (
@@ -24,8 +23,7 @@ export default function DeleteModal({
 
       <dialog
         ref={dialogRef}
-        onClose={(e) => e.currentTarget.classList.add("invisible")}
-        className="invisible flex flex-col gap-5 rounded-lg p-6 backdrop:bg-black/25 w-96"
+        className="invisible open:visible scale-0 open:scale-100 transition-all duration-100 flex flex-col gap-5 rounded-lg p-6 backdrop:bg-black/25 w-96"
       >
         <h1 className="font-semibold text-xl text-darkBlue">Delete Comment</h1>
 

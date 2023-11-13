@@ -27,7 +27,7 @@ export default function Comment({
 
   return (
     <div className="flex flex-col gap-4 md:gap-2">
-      <div className="bg-white w-full gap-4 rounded-md flex flex-col p-4 md:p-6 md:flex-row md:gap-6">
+      <div className="bg-white w-full gap-4 rounded-md flex flex-col p-4 md:p-6 md:flex-row md:gap-6 md:hover:shadow-[rgba(7,_65,_210,_0.03)_0px_9px_30px] md:hover:scale-[1.02] transition-all">
         <div className="hidden md:block">
           <UpdateScoreForm {...{ score, id }} />
         </div>

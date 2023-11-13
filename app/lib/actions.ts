@@ -10,7 +10,7 @@ import {
 } from "./utils";
 
 const PATH_TO_FILE = "./data.json";
-const MAX_ID = 1000;
+const MAX_ID = 1000000;
 
 export async function createComment(
   currentUser: User,

@@ -30,7 +30,7 @@ export default function CreateCommentForm({
       ref={formRef}
       action={dispatch}
       onSubmit={() => isReply?.closeForm()}
-      className="bg-white w-full grid grid-cols-2 grid-rows-[1fr] gap-4 p-4 rounded-md md:p-6 md:grid-cols-[34px_1fr_112px]"
+      className="bg-white w-full grid grid-cols-2 grid-rows-[1fr] gap-4 p-4 rounded-md md:p-6 md:grid-cols-[auto_1fr_auto]"
     >
       <textarea
         id="content"
@@ -46,7 +46,9 @@ export default function CreateCommentForm({
         height={34}
         className="md:order-first"
       />
-      <FormButton value={isReply ? "reply" : "send"} />
+      <div className="w-fit h-fit place-self-end md:place-self-start">
+        <FormButton value={isReply ? "reply" : "send"} />
+      </div>
     </form>
   );
 }
