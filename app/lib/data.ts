@@ -2,7 +2,7 @@ import * as fs from "fs";
 import { Data } from "./definitions";
 import { findCommentById, generateRandomNumber } from "./utils";
 
-const PATH_TO_FILE = "/app/data.json";
+const PATH_TO_FILE = process.cwd() + "/app/data.json";
 
 export async function fetchData(maxDelay = 0) {
   await new Promise((resolve) =>
