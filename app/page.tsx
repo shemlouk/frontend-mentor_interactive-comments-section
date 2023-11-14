@@ -4,8 +4,10 @@ import ContextsContainer from "./ui/contexts-container";
 import DeleteModal from "./ui/delete-modal";
 import CreateCommentForm from "./ui/forms/create-comment-form";
 
+const MAX_FIRST_LOADING_DELAY = 3000;
+
 export default async function Home() {
-  const data = await fetchData();
+  const data = await fetchData(MAX_FIRST_LOADING_DELAY);
 
   return (
     <main className="w-full h-screen bg-veryLightGray px-4 py-6 text-grayishBlue flex flex-col gap-4 md:px-[10%] lg:px-[20%] xl:px-[30%] md:py-16 selection:bg-lightGrayishBlue selection:text-moderateBlue">

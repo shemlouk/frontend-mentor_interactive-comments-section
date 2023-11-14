@@ -3,9 +3,11 @@ import { deleteComment } from "@/app/lib/actions";
 export default function DeleteCommentForm({
   id,
   closeDialog,
+  confirmDeletedId,
 }: {
   id: number;
   closeDialog(): void;
+  confirmDeletedId(): void;
 }) {
   return (
     <form
@@ -21,7 +23,10 @@ export default function DeleteCommentForm({
       </button>
       <button
         type="submit"
-        formAction={() => deleteComment(id)}
+        formAction={() => {
+          deleteComment(id);
+          confirmDeletedId();
+        }}
         className="rounded-lg py-3 flex-1 text-white bg-softRed font-semibold tracking-wide"
       >
         YES, DELETE

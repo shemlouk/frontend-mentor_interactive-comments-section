@@ -1,7 +1,7 @@
 "use server";
 
-import * as fs from "fs";
-import { fetchData } from "./data";
+import { revalidatePath } from "next/cache";
+import { fetchData, updateData } from "./data";
 import { Comment, ReplyTo, User } from "./definitions";
 import {
   findCommentById,
@@ -9,7 +9,6 @@ import {
   generateRandomNumber,
 } from "./utils";
 
-const PATH_TO_FILE = "./data.json";
 const MAX_ID = 1000000;
 
 export async function createComment(
@@ -42,7 +41,8 @@ export async function createComment(
       data.comments.push(newComment);
     }
 
-    fs.writeFileSync(PATH_TO_FILE, JSON.stringify(data));
+    updateData(data);
+    revalidatePath("/");
   } catch (error) {
     console.error(error);
   }
@@ -55,7 +55,7 @@ export async function updateScore(commentId: number, action: "add" | "sub") {
     const { comment } = findCommentById(commentId, data.comments);
     if (comment) comment.score += action === "add" ? 1 : -1;
 
-    fs.writeFileSync(PATH_TO_FILE, JSON.stringify(data));
+    updateData(data);
   } catch (error) {
     console.error(error);
   }
@@ -68,7 +68,7 @@ export async function deleteComment(commentId: number) {
     const { index, arr } = findCommentById(commentId, data.comments);
     if (index > -1) arr.splice(index, 1);
 
-    fs.writeFileSync(PATH_TO_FILE, JSON.stringify(data));
+    updateData(data);
   } catch (error) {
     console.error(error);
   }
@@ -85,7 +85,7 @@ export async function editCommentContent(
     const { comment } = findCommentById(commentId, data.comments);
     if (comment && content) comment.content = content;
 
-    fs.writeFileSync(PATH_TO_FILE, JSON.stringify(data));
+    updateData(data);
   } catch (error) {
     console.error(error);
   }

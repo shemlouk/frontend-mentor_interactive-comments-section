@@ -8,14 +8,16 @@ export default function EditContentForm({
 }: {
   id: number;
   content: string;
-  closeForm(): void;
+  closeForm(newContent: string): void;
 }) {
   const updateContentWithId = editCommentContent.bind(null, id);
 
   return (
     <form
-      onSubmit={closeForm}
-      action={updateContentWithId}
+      action={(formData) => {
+        updateContentWithId(formData);
+        closeForm((formData.get("content") ?? "").toString());
+      }}
       className="flex flex-col items-end gap-4"
     >
       <textarea

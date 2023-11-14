@@ -10,4 +10,7 @@ export const UserContext = createContext<User>({
 
 export const CommentsContext = createContext<Comment[]>([]);
 
-export const DeleteCommentContext = createContext((id: number) => {});
+export const DeleteCommentContext = createContext({
+  deletedId: -1,
+  openModel: (id: number) => {},
+});

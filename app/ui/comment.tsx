@@ -19,14 +19,16 @@ export default function Comment({
   replyingTo,
   isCurrentUser,
 }: Comment & { isCurrentUser: boolean }) {
+  const [currentContent, setCurrentContent] = useState(content);
+
+  const { openModel } = useContext(DeleteCommentContext);
+  const openModelWithId = openModel.bind(null, id);
+
   const [isReplying, setIsReplying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const openModel = useContext(DeleteCommentContext);
-  const openModelWithId = openModel.bind(null, id);
-
   return (
-    <div className="flex flex-col gap-4 md:gap-2">
+    <div className="flex flex-col gap-4 md:gap-2 transition-all">
       <div className="bg-white w-full gap-4 rounded-md flex flex-col p-4 md:p-6 md:flex-row md:gap-6 md:hover:shadow-[rgba(7,_65,_210,_0.03)_0px_9px_30px] md:hover:scale-[1.02] transition-all">
         <div className="hidden md:block">
           <UpdateScoreForm {...{ score, id }} />
@@ -70,8 +72,12 @@ export default function Comment({
 
           {isEditing ? (
             <EditContentForm
-              {...{ id, content }}
-              closeForm={() => setIsEditing(false)}
+              id={id}
+              content={currentContent}
+              closeForm={(newContent: string) => {
+                setCurrentContent(newContent);
+                setIsEditing(false);
+              }}
             />
           ) : (
             <p>
@@ -81,7 +87,7 @@ export default function Comment({
               >
                 @{replyingTo}
               </span>
-              {content}
+              {currentContent}
             </p>
           )}
         </div>

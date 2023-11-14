@@ -14,6 +14,7 @@ export default function UpdateScoreForm({
   score: number;
 }) {
   const [scoreState, setScoreState] = useState<"add" | "sub">();
+  const [currentScore, setCurrentScore] = useState(score);
 
   return (
     <form className="flex items-center w-24 h-10 overflow-hidden rounded-lg bg-veryLightGray md:flex-col md:w-10 md:h-24">
@@ -21,6 +22,7 @@ export default function UpdateScoreForm({
         type="submit"
         formAction={() => {
           updateScore(id, "add");
+          setCurrentScore(currentScore + 1);
           setScoreState(scoreState ? undefined : "add");
         }}
         disabled={scoreState === "add"}
@@ -33,13 +35,14 @@ export default function UpdateScoreForm({
         data-disabled={!!scoreState}
         className="h-full px-2 md:h-fit md:w-full md:py-1 flex justify-center items-center text-center text-moderateBlue font-semibold data-[disabled=true]:bg-moderateBlue/10 transition-colors"
       >
-        {score}
+        {currentScore}
       </span>
 
       <button
         type="submit"
         formAction={() => {
           updateScore(id, "sub");
+          setCurrentScore(currentScore - 1);
           setScoreState(scoreState ? undefined : "sub");
         }}
         disabled={scoreState === "sub"}

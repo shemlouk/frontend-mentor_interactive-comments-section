@@ -9,16 +9,21 @@ export default function DeleteModal({
 }: {
   children: React.ReactNode;
 }) {
+  const [deletedId, setDeletedId] = useState(-1);
   const [commentId, setCommentId] = useState(-1);
+
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const openModelWithId = useCallback((id: number) => {
-    setCommentId(id);
-    dialogRef.current?.showModal();
-  }, []);
+  const openModel = useCallback(
+    (id: number) => {
+      setCommentId(id);
+      dialogRef.current?.showModal();
+    },
+    [setCommentId]
+  );
 
   return (
-    <DeleteCommentContext.Provider value={openModelWithId}>
+    <DeleteCommentContext.Provider value={{ openModel, deletedId }}>
       {children}
 
       <dialog
@@ -35,6 +40,7 @@ export default function DeleteModal({
         <DeleteCommentForm
           id={commentId}
           closeDialog={() => dialogRef.current?.close()}
+          confirmDeletedId={() => setDeletedId(commentId)}
         />
       </dialog>
     </DeleteCommentContext.Provider>
