@@ -2,14 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { fetchData, updateData } from "./data";
-import { Comment, ReplyTo, User } from "./definitions";
-import {
-  findCommentById,
-  findCommentParentById,
-  generateRandomNumber,
-} from "./utils";
-
-const MAX_ID = 1000000;
+import { ReplyTo, User } from "./definitions";
+import { buildComment, findCommentById, findCommentParentById } from "./utils";
 
 export async function createComment(
   currentUser: User,
@@ -18,16 +12,11 @@ export async function createComment(
 ) {
   try {
     const data = await fetchData();
-    const newId = generateRandomNumber(MAX_ID);
 
-    const newComment: Comment = {
-      id: newId,
+    const newComment = buildComment({
       content: (formData.get("content") ?? "").toString(),
-      createdAt: "now",
-      score: 0,
       user: currentUser,
-      replies: [],
-    };
+    });
 
     if (replyingTo) {
       const { username, commentId } = replyingTo;

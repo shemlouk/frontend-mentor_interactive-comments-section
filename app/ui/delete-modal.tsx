@@ -9,8 +9,8 @@ export default function DeleteModal({
 }: {
   children: React.ReactNode;
 }) {
-  const [deletedId, setDeletedId] = useState(-1);
-  const [commentId, setCommentId] = useState(-1);
+  const [deletedId, setDeletedId] = useState(-Infinity);
+  const [commentId, setCommentId] = useState(-Infinity);
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 

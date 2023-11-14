@@ -8,7 +8,10 @@ export const UserContext = createContext<User>({
   username: "",
 });
 
-export const CommentsContext = createContext<Comment[]>([]);
+export const CommentsContext = createContext({
+  comments: [] as Comment[],
+  updateComments: (newComment: Comment, replyCommentId?: number) => {},
+});
 
 export const DeleteCommentContext = createContext({
   deletedId: -1,

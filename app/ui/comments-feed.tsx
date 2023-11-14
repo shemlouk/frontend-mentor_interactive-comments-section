@@ -4,15 +4,16 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import * as contexts from "../lib/contexts";
 import { Comment as TypeComment } from "../lib/definitions";
 import Comment from "./comment";
+import { CommentSkeleton } from "./skeletons";
 
 const { CommentsContext, DeleteCommentContext, UserContext } = contexts;
 
 const ANIMATION_TIMEOUT = 400;
-const SCROLL_BACK_THRESHOLD_DISTANCE = 150;
+const SCROLL_BACK_THRESHOLD_DISTANCE = 200;
 
 export default function CommentsFeed() {
+  const { comments } = useContext(CommentsContext);
   const { username } = useContext(UserContext);
-  const comments = useContext(CommentsContext);
 
   const [isOnBottom, setIsOnBottom] = useState(true);
 
@@ -140,22 +141,17 @@ function CommentItem({
   children: React.ReactNode;
 }) {
   const itemRef = useRef<HTMLLIElement>(null);
-  const [hide, setHide] = useState(true);
 
-  useEffect(() => {
-    itemRef.current?.scrollIntoView({ behavior: "smooth" });
-
-    const loadAnimationTimeout = 100 * index;
-    setTimeout(() => setHide(false), loadAnimationTimeout);
-  }, [index]);
+  useEffect(() => itemRef.current?.scrollIntoView({ behavior: "smooth" }), []);
 
   const { deletedId } = useContext(DeleteCommentContext);
   const [isDeleted, setIsDeleted] = useState(false);
+  const [hide, setHide] = useState(false);
 
   useEffect(() => {
-    const deleteStatus = deletedId === comment.id;
+    const deletedStatus = deletedId === comment.id;
 
-    if (deleteStatus) {
+    if (deletedStatus) {
       setIsDeleted(true);
       setTimeout(() => setHide(true), ANIMATION_TIMEOUT);
     }
@@ -166,9 +162,13 @@ function CommentItem({
       ref={itemRef}
       data-hide={hide}
       data-deleted={isDeleted}
-      className="data-[hide=true]:translate-y-10 data-[hide=true]:opacity-0 transition-all duration-ANIMATION_TIMEOUT ease-out data-[deleted=true]:translate-x-10 data-[deleted=true]:opacity-0 data-[deleted=true]:data-[hide=true]:hidden"
+      className="transition-all duration-400 ease-out data-[deleted=true]:translate-x-10 data-[deleted=true]:opacity-0 data-[deleted=true]:data-[hide=true]:hidden"
     >
-      <Comment {...{ ...comment, isCurrentUser }} />
+      {comment.id < 0 ? (
+        <CommentSkeleton />
+      ) : (
+        <Comment {...{ ...comment, isCurrentUser }} />
+      )}
       {children}
     </li>
   );

@@ -1,9 +1,10 @@
 "use client";
 
+import { buildComment } from "@/app/lib/utils";
 import Image from "next/image";
 import { useCallback, useContext, useRef } from "react";
 import { createComment } from "../../lib/actions";
-import { UserContext } from "../../lib/contexts";
+import { CommentsContext, UserContext } from "../../lib/contexts";
 import { ReplyTo } from "../../lib/definitions";
 import { FormButton } from "../buttons";
 
@@ -12,9 +13,10 @@ export default function CreateCommentForm({
 }: {
   isReply?: { to: ReplyTo; closeForm(): void };
 }) {
+  const { updateComments } = useContext(CommentsContext);
   const user = useContext(UserContext);
-  const createCommentWithUser = createComment.bind(null, user);
 
+  const createCommentWithUser = createComment.bind(null, user);
   const formRef = useRef<HTMLFormElement>(null);
 
   const dispatch = useCallback(
@@ -29,7 +31,14 @@ export default function CreateCommentForm({
     <form
       ref={formRef}
       action={dispatch}
-      onSubmit={() => isReply?.closeForm()}
+      onSubmit={() => {
+        isReply?.closeForm();
+
+        const commentPlaceholder = buildComment();
+        commentPlaceholder.id = -1;
+
+        updateComments(commentPlaceholder, isReply && isReply.to.commentId);
+      }}
       className="bg-white w-full grid grid-cols-2 grid-rows-[1fr] gap-4 p-4 rounded-md md:p-6 md:grid-cols-[auto_1fr_auto]"
     >
       <textarea

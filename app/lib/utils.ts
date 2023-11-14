@@ -33,3 +33,24 @@ export function findCommentParentById(searchId: number, comments: Comment[]) {
       id === searchId || replies?.some(({ id }) => id === searchId)
   );
 }
+
+const MAX_ID = 1_000_000;
+
+export function buildComment(
+  data?: Pick<Comment, "content" | "user">
+): Comment {
+  return {
+    id: generateRandomNumber(MAX_ID),
+    content: data?.content ?? "",
+    createdAt: "now",
+    score: 0,
+    user: data?.user ?? {
+      image: {
+        png: "",
+        webp: "",
+      },
+      username: "",
+    },
+    replies: [],
+  };
+}
