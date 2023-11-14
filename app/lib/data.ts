@@ -2,13 +2,9 @@ import * as fs from "fs";
 import { Data } from "./definitions";
 import { findCommentById, generateRandomNumber } from "./utils";
 
-const PATH_TO_FILE = process.cwd() + "/app/data.json";
+const PATH_TO_FILE = "/tmp/data.json";
 
-export async function fetchData(maxDelay = 0) {
-  await new Promise((resolve) =>
-    setTimeout(resolve, generateRandomNumber(maxDelay))
-  );
-
+export async function fetchData() {
   return JSON.parse(fs.readFileSync(PATH_TO_FILE, "utf-8")) as Data;
 }
 

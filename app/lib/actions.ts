@@ -45,6 +45,7 @@ export async function updateScore(commentId: number, action: "add" | "sub") {
     if (comment) comment.score += action === "add" ? 1 : -1;
 
     updateData(data);
+    revalidatePath("/");
   } catch (error) {
     console.error(error);
   }
@@ -58,6 +59,7 @@ export async function deleteComment(commentId: number) {
     if (index > -1) arr.splice(index, 1);
 
     updateData(data);
+    revalidatePath("/");
   } catch (error) {
     console.error(error);
   }
@@ -75,6 +77,7 @@ export async function editCommentContent(
     if (comment && content) comment.content = content;
 
     updateData(data);
+    revalidatePath("/");
   } catch (error) {
     console.error(error);
   }
