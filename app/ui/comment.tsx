@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useContext, useState } from "react";
 import { DeleteCommentContext } from "../lib/contexts";
 import { Comment } from "../lib/definitions";
+import { simplifyTime } from "../lib/utils";
 import { CommentButton } from "./buttons";
 import CreateCommentForm from "./forms/create-comment-form";
 import EditContentForm from "./forms/edit-content-form";
@@ -57,7 +58,7 @@ export default function Comment({
                 </span>
               </div>
 
-              <span>{createdAt}</span>
+              <span>{simplifyTime(createdAt)}</span>
             </div>
 
             <div className="hidden md:block">
