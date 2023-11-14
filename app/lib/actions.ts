@@ -30,7 +30,7 @@ export async function createComment(
       data.comments.push(newComment);
     }
 
-    updateData(data);
+    await updateData(data);
     revalidatePath("/");
   } catch (error) {
     console.error(error);
@@ -44,7 +44,7 @@ export async function updateScore(commentId: number, action: "add" | "sub") {
     const { comment } = findCommentById(commentId, data.comments);
     if (comment) comment.score += action === "add" ? 1 : -1;
 
-    updateData(data);
+    await updateData(data);
     revalidatePath("/");
   } catch (error) {
     console.error(error);
@@ -58,7 +58,7 @@ export async function deleteComment(commentId: number) {
     const { index, arr } = findCommentById(commentId, data.comments);
     if (index > -1) arr.splice(index, 1);
 
-    updateData(data);
+    await updateData(data);
     revalidatePath("/");
   } catch (error) {
     console.error(error);
@@ -76,7 +76,7 @@ export async function editCommentContent(
     const { comment } = findCommentById(commentId, data.comments);
     if (comment && content) comment.content = content;
 
-    updateData(data);
+    await updateData(data);
     revalidatePath("/");
   } catch (error) {
     console.error(error);
