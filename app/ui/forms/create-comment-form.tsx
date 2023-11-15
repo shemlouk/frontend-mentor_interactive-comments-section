@@ -20,25 +20,24 @@ export default function CreateCommentForm({
   const formRef = useRef<HTMLFormElement>(null);
 
   const dispatch = useCallback(
-    async (formData: FormData) => {
+    (formData: FormData) => {
+      const content = (formData.get("content") ?? "").toString();
+      createCommentWithUser(content, isReply?.to);
+
+      const commentPlaceholder = buildComment();
+      commentPlaceholder.id = -1;
+      updateComments(commentPlaceholder, isReply?.to.commentId);
+
+      isReply?.closeForm();
       formRef.current?.reset();
-      createCommentWithUser(formData, isReply?.to);
     },
-    [createCommentWithUser, isReply]
+    [createCommentWithUser, isReply, updateComments]
   );
 
   return (
     <form
       ref={formRef}
       action={dispatch}
-      onSubmit={() => {
-        isReply?.closeForm();
-
-        const commentPlaceholder = buildComment();
-        commentPlaceholder.id = -1;
-
-        updateComments(commentPlaceholder, isReply && isReply.to.commentId);
-      }}
       className="bg-white w-full grid grid-cols-2 grid-rows-[1fr] gap-4 p-4 rounded-md md:p-6 md:grid-cols-[auto_1fr_auto]"
     >
       <textarea

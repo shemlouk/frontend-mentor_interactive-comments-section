@@ -1,11 +1,11 @@
-import { fetchData } from "./lib/data";
+import { getStaticData } from "./lib/data";
 import CommentsFeed from "./ui/comments-feed";
 import ContextsContainer from "./ui/contexts-container";
 import DeleteModal from "./ui/delete-modal";
 import CreateCommentForm from "./ui/forms/create-comment-form";
 
 export default async function Home() {
-  const data = await fetchData();
+  const data = await getStaticData();
 
   return (
     <main className="w-full flex flex-col items-center gap-4 h-screen px-4 py-6 md:px-[10%] md:py-16 bg-veryLightGray text-grayishBlue selection:bg-lightGrayishBlue selection:text-moderateBlue">

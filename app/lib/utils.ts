@@ -1,22 +1,26 @@
-import { Comment } from "./definitions";
+import { Comment, Data } from "./definitions";
+
+export function getLocalData() {
+  const data = localStorage.getItem("data");
+  return data ? (JSON.parse(data) as Data) : undefined;
+}
+
+export function setLocalData(newData: Data) {
+  localStorage.setItem("data", JSON.stringify(newData));
+}
 
 export function generateRandomNumber(max: number) {
   return Math.round(Math.random() * max);
 }
 
-type SearchResult = {
-  comment?: Comment;
-  index: number;
-  arr: Comment[];
-};
-
 export function findCommentById(searchId: number, comments: Comment[]) {
-  let result: SearchResult = { comment: undefined, index: -1, arr: comments };
+  let result: { comment?: Comment; index: number; arr: Comment[] };
+  result = { comment: undefined, index: -1, arr: comments };
 
   comments.forEach((comment, index) => {
     if (comment.id === searchId) {
-      result.index = index;
       result.comment = comment;
+      result.index = index;
       return;
     } else if (!!comment.replies?.length) {
       const repliesSearch = findCommentById(searchId, comment.replies);
@@ -27,32 +31,25 @@ export function findCommentById(searchId: number, comments: Comment[]) {
   return result;
 }
 
-export function findCommentParentById(searchId: number, comments: Comment[]) {
-  return comments.find(
-    ({ id, replies }) =>
-      id === searchId || replies?.some(({ id }) => id === searchId)
-  );
-}
+export function buildComment(data?: Pick<Comment, "content" | "user">) {
+  const maxId = 1_000_000;
 
-const MAX_ID = 1_000_000;
+  const emptyUser = {
+    image: {
+      png: "",
+      webp: "",
+    },
+    username: "",
+  };
 
-export function buildComment(
-  data?: Pick<Comment, "content" | "user">
-): Comment {
   return {
-    id: generateRandomNumber(MAX_ID),
+    id: generateRandomNumber(maxId),
     content: data?.content ?? "",
     createdAt: new Date().toJSON(),
     score: 0,
-    user: data?.user ?? {
-      image: {
-        png: "",
-        webp: "",
-      },
-      username: "",
-    },
+    user: data?.user ?? emptyUser,
     replies: [],
-  };
+  } as Comment;
 }
 
 const oneSecond = 1000;

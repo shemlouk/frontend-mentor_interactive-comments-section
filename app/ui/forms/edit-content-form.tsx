@@ -1,4 +1,4 @@
-import { editCommentContent } from "@/app/lib/actions";
+import { editContent } from "@/app/lib/actions";
 import { FormButton } from "../buttons";
 
 export default function EditContentForm({
@@ -10,13 +10,14 @@ export default function EditContentForm({
   content: string;
   closeForm(newContent: string): void;
 }) {
-  const updateContentWithId = editCommentContent.bind(null, id);
+  const updateContentWithId = editContent.bind(null, id);
 
   return (
     <form
       action={(formData) => {
-        updateContentWithId(formData);
-        closeForm((formData.get("content") ?? "").toString());
+        const content = (formData.get("content") ?? "").toString();
+        updateContentWithId(content);
+        closeForm(content);
       }}
       className="flex flex-col items-end gap-4"
     >

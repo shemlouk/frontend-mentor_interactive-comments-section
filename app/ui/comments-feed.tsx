@@ -42,7 +42,7 @@ export default function CommentsFeed() {
   return (
     <div
       onScroll={updateIsOnBottom}
-      className="md:max-w-[848px] flex-1 overflow-y-scroll no-scrollbar md:-m-10 md:p-10"
+      className="md:max-w-[848px] w-full flex-1 overflow-y-scroll no-scrollbar md:-m-10 md:p-10"
     >
       <CommentList {...{ comments, username }} />
 

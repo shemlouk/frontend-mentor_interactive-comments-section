@@ -14,6 +14,6 @@ export const CommentsContext = createContext({
 });
 
 export const DeleteCommentContext = createContext({
-  deletedId: -1,
+  deletedId: -Infinity,
   openModel: (id: number) => {},
 });
