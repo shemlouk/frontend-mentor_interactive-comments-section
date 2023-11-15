@@ -98,6 +98,10 @@ function RepliesContainer({
     if (repliesList) {
       const listObserver = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
+          if (mutation.type === "childList") {
+            containerRef.current?.classList.remove("hidden");
+          }
+
           if (mutation.target.nodeName === "LI") {
             const replies = repliesList.querySelectorAll("li");
             const total = repliesList.childElementCount;
@@ -117,7 +121,11 @@ function RepliesContainer({
         }
       });
 
-      listObserver.observe(repliesList, { attributes: true, subtree: true });
+      listObserver.observe(repliesList, {
+        attributeFilter: ["data-deleted"],
+        childList: true,
+        subtree: true,
+      });
     }
   }, []);
 
